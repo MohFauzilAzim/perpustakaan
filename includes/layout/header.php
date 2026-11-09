@@ -48,7 +48,7 @@ function render_header(string $title, string $active = ''): void
         <div class="user">
           <span class="user-avatar"><?= e(mb_strtoupper(mb_substr($u['nama_petugas'], 0, 1))) ?></span>
           <span><?= e($u['nama_petugas']) ?><small><?= e($u['jabatan']) ?></small></span>
-          <a class="btn ghost sm" href="<?= e(url('modules/akun/ganti_password.php')) ?>">Ganti Password</a>
+          <a class="btn ghost sm" href="<?= e(url('modules/akun/pengaturan.php')) ?>">Pengaturan</a>
           <form method="post" action="<?= e(url('logout.php')) ?>">
             <?= csrf_field() ?>
             <button class="btn ghost sm" type="submit">Keluar</button>

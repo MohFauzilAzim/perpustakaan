@@ -20,7 +20,7 @@ function render_sidebar(string $active): void
   <span class="account-label">PETUGAS</span>
   <strong><?= e($_SESSION['user']['nama_petugas']) ?></strong>
   <small><?= e($_SESSION['user']['jabatan']) ?></small>
-  <a href="<?= e(url('modules/akun/ganti_password.php')) ?>">Ganti Password</a>
+  <a href="<?= e(url('modules/akun/pengaturan.php')) ?>">Pengaturan</a>
   <form method="post" action="<?= e(url('logout.php')) ?>">
     <?= csrf_field() ?>
     <button type="submit">Keluar</button>
