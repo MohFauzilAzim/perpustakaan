@@ -3,13 +3,21 @@ require __DIR__ . '/includes/bootstrap.php';
 require_login();
 $today = date('Y-m-d');
 
-$s = [];
-$s['judul']   = (int)$pdo->query('SELECT COUNT(*) FROM buku')->fetchColumn();
-$s['stok']    = (int)$pdo->query('SELECT COALESCE(SUM(stok),0) FROM buku')->fetchColumn();
-$s['anggota'] = (int)$pdo->query("SELECT COUNT(*) FROM anggota WHERE status_aktif='Aktif'")->fetchColumn();
-$s['pinjam']  = (int)$pdo->query("SELECT COUNT(*) FROM peminjaman WHERE status='Dipinjam'")->fetchColumn();
-$st = $pdo->prepare("SELECT COUNT(*) FROM peminjaman WHERE status='Dipinjam' AND tgl_kembali < ?");
-$st->execute([$today]); $s['telat'] = (int)$st->fetchColumn();
+$st = $pdo->prepare("SELECT
+    (SELECT COUNT(*) FROM buku) AS judul,
+    (SELECT COALESCE(SUM(stok),0) FROM buku) AS stok,
+    (SELECT COUNT(*) FROM anggota WHERE status_aktif='Aktif') AS anggota,
+    (SELECT COUNT(*) FROM peminjaman WHERE status='Dipinjam') AS pinjam,
+    (SELECT COUNT(*) FROM peminjaman WHERE status='Dipinjam' AND tgl_kembali < ?) AS telat");
+$st->execute([$today]);
+$sRow = $st->fetch();
+$s = [
+    'judul'   => (int)($sRow['judul'] ?? 0),
+    'stok'    => (int)($sRow['stok'] ?? 0),
+    'anggota' => (int)($sRow['anggota'] ?? 0),
+    'pinjam'  => (int)($sRow['pinjam'] ?? 0),
+    'telat'   => (int)($sRow['telat'] ?? 0),
+];
 
 $kat = $pdo->query('SELECT k.nama_kategori, COUNT(b.id_buku) AS judul, COALESCE(SUM(b.stok),0) AS stok
                     FROM kategori k LEFT JOIN buku b ON k.id_kategori=b.id_kategori
